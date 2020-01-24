@@ -2,6 +2,8 @@ package foerstermann.kai.zitate;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -64,5 +66,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return mainActivityListener.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return mainActivityListener.onOptionsItemSelected(item);
     }
 }

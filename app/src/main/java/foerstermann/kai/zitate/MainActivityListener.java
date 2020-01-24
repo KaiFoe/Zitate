@@ -2,12 +2,18 @@ package foerstermann.kai.zitate;
 
 import android.app.AlertDialog;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
+
+import androidx.preference.PreferenceManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,11 +37,22 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Ad
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        int duration = Toast.LENGTH_LONG;
-        String quoteAuthor = quoteList.get(position).getQuoteAuthor();
-        String message = "Ein Zitat von " + quoteAuthor + " wurde angeklickt.";
-        Toast toast = Toast.makeText(mainActivity.getApplicationContext(), message, duration);
-        toast.show();
+//        int duration = Toast.LENGTH_LONG;
+//        String quoteAuthor = quoteList.get(position).getQuoteAuthor();
+//        String message = "Ein Zitat von " + quoteAuthor + " wurde angeklickt.";
+//        Toast toast = Toast.makeText(mainActivity.getApplicationContext(), message, duration);
+//        toast.show();
+
+        //Anfordern des zur angeklickten Position gehörenden Datenobjekts
+        Quote clickedQuote = quoteList.get(position);
+        String quoteAuthor = clickedQuote.getQuoteAuthor();
+        String quoteText = clickedQuote.getQuoteText();
+
+        //Erzeugen des expliziten Intents mit den zugehörigen Daten
+        Intent explizit = new Intent(mainActivity, DetailActivity.class);
+        explizit.putExtra(DetailActivity.EXTRA_QUOTE_TEXT, quoteText);
+        explizit.putExtra(DetailActivity.EXTRA_QUOTE_AUTHOR, quoteAuthor);
+        mainActivity.startActivity(explizit);
     }
 
     @Override
@@ -109,4 +126,27 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Ad
         }
     }
 
+    private void refreshListView() {
+        int quoteCount = 8;
+        int parsingMethod = Utility.JSON_PARSING_METHOD;
+
+        //Auslesen der ausgewählten Einstellung aus der SharedPreferences
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mainActivity);
+        String prefXmlModeKey = "preference_xmlmode_key";
+        boolean isXmlModeOn = sharedPreferences.getBoolean(prefXmlModeKey, false);
+        if (isXmlModeOn)
+            parsingMethod = Utility.XML_PARSING_METHOD;
+
+        //Instanzieren des TaskObjektes und Starten des Tasks
+        //der dafür sorgt, dass die Zitate eingelesen werden
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        mainActivity.getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return false;
+    }
 }
