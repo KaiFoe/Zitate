@@ -25,12 +25,12 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Ad
     QuotesArrayAdapter quoteArrayAdapter;
 
     private static final String LISTVIEW_DATA = "Zitatdaten";
-    private List<Quote> quoteList = new ArrayList<>();
+    public List<Quote> quoteList = new ArrayList<>();
 
     public MainActivityListener(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
 
-        createQuotesList();
+        //createQuotesList();
         bindAdapterToListView();
     }
 
@@ -126,7 +126,7 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Ad
         }
     }
 
-    private void refreshListView() {
+    public void refreshListView() {
         int quoteCount = 8;
         int parsingMethod = Utility.JSON_PARSING_METHOD;
 
@@ -137,8 +137,12 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Ad
         if (isXmlModeOn)
             parsingMethod = Utility.XML_PARSING_METHOD;
 
+        String prefCountKey = "preference_quotecount_key";
+        quoteCount = Integer.parseInt(sharedPreferences.getString(prefCountKey, "10"));
         //Instanzieren des TaskObjektes und Starten des Tasks
         //der dafür sorgt, dass die Zitate eingelesen werden
+        RequestQuoteTask requestQuoteTask = new RequestQuoteTask(mainActivity, this);
+        requestQuoteTask.execute(quoteCount, parsingMethod);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -147,6 +151,15 @@ public class MainActivityListener implements AdapterView.OnItemClickListener, Ad
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        return false;
+        switch (item.getItemId()) {
+            case R.id.action_get_data:
+                refreshListView();
+                break;
+            case R.id.action_settings:
+                Intent intentSettings = new Intent(mainActivity, SettingsActivity.class);
+                mainActivity.startActivity(intentSettings);
+                break;
+        }
+        return true;
     }
 }

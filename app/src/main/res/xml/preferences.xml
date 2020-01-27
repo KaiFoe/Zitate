@@ -7,7 +7,7 @@
         android:summary="Der XML-Datenmodus ist deaktiviert"
         android:title="XML-Daten verwenden" />
     <EditTextPreference
-        android:defaultValue="Default value"
+        android:defaultValue="false"
         android:key="preference_quotecount_key"
         android:selectAllOnFocus="true"
         android:singleLine="true"
